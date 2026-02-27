@@ -21,3 +21,50 @@
 - The `nx-generate` skill handles generator discovery internally - don't call nx_docs just to look up generator syntax
 
 <!-- nx configuration end-->
+
+# Staypedia Design Guidelines
+
+## Mobile App Design Philosophy
+
+This is a **native mobile app experience**, NOT a mobile web page. The UI should feel like a polished iOS/Android app.
+
+### Design Principles
+
+1. **Native Mobile Patterns**
+   - Use bottom navigation bars (sticky, fixed at bottom)
+   - Card-based layouts with rounded corners
+   - Floating action buttons
+   - Native-feeling transitions and interactions
+   - Mobile-first spacing and touch targets (min 44px)
+
+2. **Visual Style - Warm & Cozy**
+   - Primary color: #dd5256 (`hsl(359 66% 59%)`) - warm reddish tone
+   - NO gradients (solid colors only)
+   - Font: Montserrat (all weights)
+   - Pinterest-inspired aesthetic
+   - Generous white space
+   - Soft shadows and rounded corners
+
+3. **Mobile App UI Elements**
+   - Status cards with icons
+   - Bottom sheet modals
+   - Pull-to-refresh patterns
+   - Swipeable cards
+   - Sticky headers with blur effects
+   - Icon badges and notifications
+   - Avatar circles
+   - Progress indicators
+
+### Guidebook Page Structure
+
+The guidebook page has **3 bottom navigation tabs**:
+- **Home** - Welcome, property overview, quick actions
+- **Essentials** - WiFi, codes, house info, emergency contacts
+- **Dashboard** - Host view of analytics, settings, sharing
+
+### Reference Apps
+Study these mobile app patterns for UI inspiration:
+- Delivery tracking apps (status cards, progress bars, map views)
+- Fitness apps (challenge cards, progress tracking, clean layouts)
+- Booking apps (property cards, category tabs, search filters)
+- Cashback apps (map integration, offer cards, category icons)
