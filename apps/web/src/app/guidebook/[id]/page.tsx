@@ -2,11 +2,45 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { HostProfilesTab } from './HostProfilesTab';
 
 type Tab = 'home' | 'essentials' | 'dashboard';
 
+type HostProfile = {
+  id: string;
+  name: string;
+  phone: string;
+  whatsapp: string;
+  availabilityHours: string;
+  responseTime: string;
+  role: 'host' | 'manager' | 'caretaker';
+  guidebookCount: number;
+};
+
 export default function GuidebookPage() {
   const [activeTab, setActiveTab] = useState<Tab>('home');
+  const [hostProfiles, setHostProfiles] = useState<HostProfile[]>([
+    {
+      id: '1',
+      name: 'Sarah Johnson',
+      phone: '+1 (555) 123-4567',
+      whatsapp: '+1 (555) 123-4567',
+      availabilityHours: '9 AM - 9 PM',
+      responseTime: 'Within 1 hour',
+      role: 'host',
+      guidebookCount: 3,
+    },
+    {
+      id: '2',
+      name: 'Mike Anderson',
+      phone: '+1 (555) 987-6543',
+      whatsapp: '+1 (555) 987-6543',
+      availabilityHours: '24/7',
+      responseTime: 'Within 30 mins',
+      role: 'manager',
+      guidebookCount: 5,
+    },
+  ]);
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -31,7 +65,7 @@ export default function GuidebookPage() {
       <main className="px-4 py-6">
         {activeTab === 'home' && <HomeTab />}
         {activeTab === 'essentials' && <EssentialsTab />}
-        {activeTab === 'dashboard' && <DashboardTab />}
+        {activeTab === 'dashboard' && <DashboardTab hostProfiles={hostProfiles} setHostProfiles={setHostProfiles} />}
       </main>
 
       {/* Bottom Navigation */}
@@ -231,6 +265,8 @@ function HomeTab() {
 
 // Essentials Tab Component
 function EssentialsTab() {
+  const [expandedCard, setExpandedCard] = useState<string | null>(null);
+
   return (
     <div className="space-y-6">
       {/* WiFi Card */}
@@ -258,92 +294,173 @@ function EssentialsTab() {
         </div>
       </div>
 
-      {/* Door Code Card */}
+      {/* Location Card */}
       <div className="bg-card rounded-2xl p-5 border border-border">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
-            <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+            <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
           </div>
           <div>
-            <h3 className="font-semibold text-foreground">Door Lock Code</h3>
-            <p className="text-sm text-muted-foreground">Front entrance</p>
+            <h3 className="font-semibold text-foreground">Location</h3>
+            <p className="text-sm text-muted-foreground">Property address</p>
           </div>
         </div>
-        <div className="bg-muted rounded-xl p-4 text-center">
-          <p className="font-mono text-3xl font-bold text-foreground mb-2">1234#</p>
-          <p className="text-xs text-muted-foreground">Press Schlage → Enter code → Press Schlage again</p>
+        <div className="bg-muted rounded-xl p-4">
+          <p className="text-foreground font-medium mb-2">Cozy Mountain Cabin</p>
+          <p className="text-sm text-muted-foreground">123 Mountain View Dr, Aspen, CO 81611</p>
         </div>
+        <button className="w-full mt-3 bg-primary text-primary-foreground rounded-xl py-3 font-medium flex items-center justify-center gap-2">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+          </svg>
+          Open in Maps
+        </button>
       </div>
 
-      {/* Appliances */}
+      {/* Callouts - Full width sticky note style cards */}
       <div>
-        <h3 className="text-sm font-semibold text-foreground mb-3 px-1">House Appliances</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-3 px-1">Important Info</h3>
         <div className="space-y-3">
-          <div className="bg-card rounded-xl p-4 border border-border flex items-start gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707" />
-              </svg>
-            </div>
-            <div className="flex-1">
-              <h4 className="font-medium text-foreground mb-1">Heating & Cooling</h4>
-              <p className="text-sm text-muted-foreground">Thermostat in living room. Set between 68-72°F</p>
-            </div>
-          </div>
-
-          <div className="bg-card rounded-xl p-4 border border-border flex items-start gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
-            </div>
-            <div className="flex-1">
-              <h4 className="font-medium text-foreground mb-1">Kitchen</h4>
-              <p className="text-sm text-muted-foreground">Coffee maker, toaster ready. Dishwasher pods under sink</p>
+          {/* Emergency Contact Callout */}
+          <div className="rounded-2xl p-5 border border-border shadow-sm" style={{ backgroundColor: '#fee2e2' }}>
+            <div className="flex items-start gap-3">
+              <div className="text-3xl flex-shrink-0">🚨</div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-foreground mb-2">Emergency Contact</h4>
+                <div className="space-y-2 text-sm text-foreground/80">
+                  <p>In case of emergency, please call 911 immediately.</p>
+                  <p>For non-urgent issues, you can reach us at (555) 123-4567.</p>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="bg-card rounded-xl p-4 border border-border flex items-start gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <div className="flex-1">
-              <h4 className="font-medium text-foreground mb-1">Entertainment</h4>
-              <p className="text-sm text-muted-foreground">Smart TV with Netflix, Hulu, Disney+</p>
+          {/* Quiet Hours Callout */}
+          <div className="rounded-2xl p-5 border border-border shadow-sm" style={{ backgroundColor: '#e0e7ff' }}>
+            <div className="flex items-start gap-3">
+              <div className="text-3xl flex-shrink-0">🤫</div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-foreground mb-2">Quiet Hours</h4>
+                <div className="space-y-2 text-sm text-foreground/80">
+                  <p>Please keep noise to a minimum between 10 PM and 8 AM.</p>
+                  <p>This helps ensure all guests have a peaceful stay.</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Emergency */}
-      <div className="bg-destructive/10 rounded-2xl p-5 border border-destructive/20">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-destructive/20 flex items-center justify-center">
-            <svg className="w-5 h-5 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
+      {/* Cards - Accordion style */}
+      <div>
+        <h3 className="text-sm font-semibold text-foreground mb-3 px-1">House Info</h3>
+        <div className="space-y-2">
+          {/* Heating & Cooling Card */}
+          <div className="bg-card rounded-xl border border-border overflow-hidden">
+            <button
+              onClick={() => setExpandedCard(expandedCard === '1' ? null : '1')}
+              className="w-full p-4 flex items-center justify-between hover:bg-muted/50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="text-2xl">🌡️</div>
+                <span className="font-medium text-foreground">Heating & Cooling</span>
+              </div>
+              <svg
+                className={`w-5 h-5 text-muted-foreground transition-transform ${expandedCard === '1' ? 'rotate-180' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {expandedCard === '1' && (
+              <div className="px-4 pb-4 pt-2 text-sm text-muted-foreground border-t border-border">
+                The thermostat is located in the living room. Please keep the temperature between 65-75°F to conserve energy.
+              </div>
+            )}
           </div>
-          <div>
-            <h3 className="font-semibold text-foreground">Emergency Contacts</h3>
-            <p className="text-sm text-muted-foreground">Important numbers</p>
+
+          {/* Garbage & Recycling Card */}
+          <div className="bg-card rounded-xl border border-border overflow-hidden">
+            <button
+              onClick={() => setExpandedCard(expandedCard === '2' ? null : '2')}
+              className="w-full p-4 flex items-center justify-between hover:bg-muted/50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="text-2xl">♻️</div>
+                <span className="font-medium text-foreground">Garbage & Recycling</span>
+              </div>
+              <svg
+                className={`w-5 h-5 text-muted-foreground transition-transform ${expandedCard === '2' ? 'rotate-180' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {expandedCard === '2' && (
+              <div className="px-4 pb-4 pt-2 text-sm text-muted-foreground border-t border-border">
+                Trash day is every Tuesday. Please separate recyclables into the blue bin. Compost bin is under the kitchen sink.
+              </div>
+            )}
+          </div>
+
+          {/* Internet & TV Card */}
+          <div className="bg-card rounded-xl border border-border overflow-hidden">
+            <button
+              onClick={() => setExpandedCard(expandedCard === '3' ? null : '3')}
+              className="w-full p-4 flex items-center justify-between hover:bg-muted/50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="text-2xl">📺</div>
+                <span className="font-medium text-foreground">Internet & TV</span>
+              </div>
+              <svg
+                className={`w-5 h-5 text-muted-foreground transition-transform ${expandedCard === '3' ? 'rotate-180' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {expandedCard === '3' && (
+              <div className="px-4 pb-4 pt-2 text-sm text-muted-foreground border-t border-border">
+                Smart TV has Netflix, Hulu, and Disney+. Use the remote to switch between apps. Streaming may require login.
+              </div>
+            )}
           </div>
         </div>
-        <div className="space-y-2">
-          <button className="w-full bg-destructive text-destructive-foreground rounded-xl p-3 font-semibold flex items-center justify-between">
-            <span>Emergency: 911</span>
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-            </svg>
-          </button>
-          <button className="w-full bg-card border border-border text-foreground rounded-xl p-3 font-medium flex items-center justify-between">
-            <span>Host: (555) 987-6543</span>
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-            </svg>
+      </div>
+
+      {/* Quick Widgets - Link buttons to Memos */}
+      <div>
+        <h3 className="text-sm font-semibold text-foreground mb-3 px-1">Quick Guides</h3>
+        <div className="space-y-3">
+          {/* Coffee Machine Guide - Half Width */}
+          <div className="grid grid-cols-2 gap-3">
+            <button className="bg-card rounded-xl p-4 border border-border hover:shadow-md transition-shadow text-left">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xl">☕</span>
+                <h4 className="font-medium text-foreground text-sm">Coffee Machine</h4>
+              </div>
+              <p className="text-xs text-muted-foreground">View guide</p>
+            </button>
+            <div></div>
+          </div>
+
+          {/* Parking Information - Full Width */}
+          <button className="w-full bg-card rounded-xl p-4 border border-border hover:shadow-md transition-shadow text-left">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xl">🅿️</span>
+              <h4 className="font-medium text-foreground">Parking Information</h4>
+            </div>
+            <p className="text-xs text-muted-foreground">View details about parking</p>
           </button>
         </div>
       </div>
@@ -352,7 +469,44 @@ function EssentialsTab() {
 }
 
 // Dashboard Tab Component
-function DashboardTab() {
+function DashboardTab({ hostProfiles, setHostProfiles }: { hostProfiles: HostProfile[], setHostProfiles: (profiles: HostProfile[]) => void }) {
+  const [dashboardSubTab, setDashboardSubTab] = useState<'overview' | 'profiles'>('overview');
+
+  return (
+    <div className="space-y-6">
+      {/* Dashboard Sub-Tabs */}
+      <div className="flex gap-2 border-b border-border">
+        <button
+          onClick={() => setDashboardSubTab('overview')}
+          className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors ${
+            dashboardSubTab === 'overview'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          Overview
+        </button>
+        <button
+          onClick={() => setDashboardSubTab('profiles')}
+          className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors ${
+            dashboardSubTab === 'profiles'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          Host Profiles
+        </button>
+      </div>
+
+      {/* Sub-Tab Content */}
+      {dashboardSubTab === 'overview' && <DashboardOverview />}
+      {dashboardSubTab === 'profiles' && <HostProfilesTab hostProfiles={hostProfiles} setHostProfiles={setHostProfiles} />}
+    </div>
+  );
+}
+
+// Dashboard Overview Component (original dashboard content)
+function DashboardOverview() {
   return (
     <div className="space-y-6">
       {/* Stats Overview */}
