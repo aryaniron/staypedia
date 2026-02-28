@@ -74,6 +74,18 @@ export function ContactsTabContent({
   const [primaryContactId, setPrimaryContactId] = useState<string>('');
   const [additionalContactIds, setAdditionalContactIds] = useState<string[]>([]);
 
+  // Host Profile Modal State
+  const [isHostProfileModalOpen, setIsHostProfileModalOpen] = useState(false);
+  const [newHostProfile, setNewHostProfile] = useState<HostProfile>({
+    id: '',
+    name: '',
+    phone: '',
+    whatsapp: '',
+    availabilityHours: '',
+    responseTime: '',
+    role: 'host',
+  });
+
   const getRoleIcon = (role: string) => {
     switch (role) {
       case 'host':
@@ -106,6 +118,29 @@ export function ContactsTabContent({
     } else {
       setAdditionalContactIds([...additionalContactIds, profileId]);
     }
+  };
+
+  const handleSaveHostProfile = () => {
+    if (!newHostProfile.name.trim() || !newHostProfile.phone.trim()) {
+      alert('Please fill in required fields: Name and Phone');
+      return;
+    }
+
+    // In a real app, this would save to the database
+    // For now, we'll just close the modal
+    // TODO: Add the new profile to hostProfiles array
+    console.log('New host profile created:', newHostProfile);
+
+    setIsHostProfileModalOpen(false);
+    setNewHostProfile({
+      id: '',
+      name: '',
+      phone: '',
+      whatsapp: '',
+      availabilityHours: '',
+      responseTime: '',
+      role: 'host',
+    });
   };
 
   const handleSaveLocalContact = () => {
@@ -188,9 +223,20 @@ export function ContactsTabContent({
         <div className="space-y-6">
           {/* Primary Contact */}
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <h3 className="text-lg font-semibold text-foreground">Primary Contact</h3>
-              <span className="text-xs px-2 py-0.5 bg-destructive/10 text-destructive rounded-full font-medium">Required</span>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-foreground">Primary Contact</h3>
+                <span className="text-xs px-2 py-0.5 bg-destructive/10 text-destructive rounded-full font-medium">Required</span>
+              </div>
+              <button
+                onClick={() => setIsHostProfileModalOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors text-sm font-medium"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                New Profile
+              </button>
             </div>
             <p className="text-sm text-muted-foreground mb-4">
               This contact will be shown prominently to guests as the main point of contact
@@ -615,6 +661,146 @@ export function ContactsTabContent({
                 className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
               >
                 {editingLocalContact ? 'Save Changes' : 'Add Contact'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Host Profile Modal */}
+      {isHostProfileModalOpen && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-card rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-border">
+            <div className="sticky top-0 bg-card border-b border-border px-6 py-4 flex items-center justify-between">
+              <h3 className="text-xl font-semibold text-foreground">
+                Create New Host Profile
+              </h3>
+              <button
+                onClick={() => {
+                  setIsHostProfileModalOpen(false);
+                  setNewHostProfile({
+                    id: '',
+                    name: '',
+                    phone: '',
+                    whatsapp: '',
+                    availabilityHours: '',
+                    responseTime: '',
+                    role: 'host',
+                  });
+                }}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Name *
+                </label>
+                <input
+                  type="text"
+                  value={newHostProfile.name}
+                  onChange={(e) => setNewHostProfile({ ...newHostProfile, name: e.target.value })}
+                  className="w-full px-4 py-2 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  placeholder="John Doe"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Phone Number *
+                </label>
+                <input
+                  type="tel"
+                  value={newHostProfile.phone}
+                  onChange={(e) => setNewHostProfile({ ...newHostProfile, phone: e.target.value })}
+                  className="w-full px-4 py-2 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  placeholder="+1 (555) 123-4567"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  WhatsApp Number
+                </label>
+                <input
+                  type="tel"
+                  value={newHostProfile.whatsapp}
+                  onChange={(e) => setNewHostProfile({ ...newHostProfile, whatsapp: e.target.value })}
+                  className="w-full px-4 py-2 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  placeholder="+1 (555) 123-4567"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Availability Hours
+                </label>
+                <input
+                  type="text"
+                  value={newHostProfile.availabilityHours}
+                  onChange={(e) => setNewHostProfile({ ...newHostProfile, availabilityHours: e.target.value })}
+                  className="w-full px-4 py-2 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  placeholder="9 AM - 9 PM"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Response Time
+                </label>
+                <input
+                  type="text"
+                  value={newHostProfile.responseTime}
+                  onChange={(e) => setNewHostProfile({ ...newHostProfile, responseTime: e.target.value })}
+                  className="w-full px-4 py-2 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  placeholder="Within 1 hour"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Role
+                </label>
+                <select
+                  value={newHostProfile.role}
+                  onChange={(e) => setNewHostProfile({ ...newHostProfile, role: e.target.value as 'host' | 'manager' | 'caretaker' })}
+                  className="w-full px-4 py-2 bg-background border border-input rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value="host">Host</option>
+                  <option value="manager">Manager</option>
+                  <option value="caretaker">Caretaker</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="sticky bottom-0 bg-card border-t border-border px-6 py-4 flex gap-3 justify-end">
+              <button
+                onClick={() => {
+                  setIsHostProfileModalOpen(false);
+                  setNewHostProfile({
+                    id: '',
+                    name: '',
+                    phone: '',
+                    whatsapp: '',
+                    availabilityHours: '',
+                    responseTime: '',
+                    role: 'host',
+                  });
+                }}
+                className="px-4 py-2 border border-input rounded-lg hover:bg-muted transition-colors font-medium text-foreground"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveHostProfile}
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
+              >
+                Create Profile
               </button>
             </div>
           </div>
